@@ -1,4 +1,4 @@
-FROM golang:1.20-bullseye
+FROM golang:1.20-bullseye as gobuild
 
 COPY . /usr/local/app
 WORKDIR /usr/local/app
@@ -9,9 +9,9 @@ RUN go run github.com/playwright-community/playwright-go/cmd/playwright install 
 RUN go build -o main main.go
 
 # FROM gcr.io/distroless/base
+FROM debian
 
-# WORKDIR /usr/local/app
-
-# COPY --from=gobuild /usr/local/app/main /main
-
-ENTRYPOINT ["/usr/local/app/main"]
+COPY --from=gobuild /usr/local/app/main /main
+COPY --from=gobuild /root/.cache/ms-playwright-go /root/.cache/ms-playwright-go
+# ENTRYPOINT ["/usr/local/app/main"]
+ENTRYPOINT ["/main"]
