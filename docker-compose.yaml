@@ -1,0 +1,99 @@
+version: "3"
+services:
+  # crawler:
+  #   image: "crawler-linea:1.0.0"
+  crawler-homes:
+    image: "crawler-homes-go:1.0.0"
+    deploy:
+      replicas: 1
+    environment:
+      - WS_SESSION_ID=2729269e3612dc81d9f57aa7e00a7df9
+      - WS_ENDPOINT=ws://172.31.22.239:1234
+    # depends_on:
+    #   - nats-server
+  # scanner-suumo:
+  #   image: "scanner-suumo:1.0.0"
+  #   deploy:
+  #     replicas: 1
+  #   environment:
+  #     - NATS_SERVER_URL=nats-server:4222
+  #     - NATS_SUBJECT_ROOMURL=room-suumo-tky-rent
+  #     - NATS_SUBJECT_ROOMDETAIL=roomdetails-tky-rent
+  #   depends_on:
+  #     - nats-server
+  # scanner-homes:
+  #   image: "scanner-homes:1.0.0"
+  #   deploy:
+  #     replicas: 1
+  #   environment:
+  #     - NATS_SERVER_URL=nats-server:4222
+  #     - NATS_SUBJECT_ROOMURL=room-homes-tky-rent
+  #     - NATS_SUBJECT_ROOMDETAIL=roomdetails-tky-rent
+  #   depends_on:
+  #     - nats-server
+  # scanner-homes-ngy:
+  #   image: "scanner-homes:1.0.0"
+  #   deploy:
+  #     replicas: 1
+  #   environment:
+  #     - NATS_SERVER_URL=nats-server:4222
+  #     - NATS_SUBJECT_ROOMURL=room-homes-ngy-rent
+  #     - NATS_SUBJECT_ROOMDETAIL=roomdetails-ngy-rent
+  #   depends_on:
+  #     - nats-server
+  # scanner-goodrooms:
+  #   image: "scanner-goodrooms:1.0.0"
+  #   deploy:
+  #     replicas: 1
+  #   environment:
+  #     - NATS_SERVER_URL=nats-server:4222
+  #     - NATS_SUBJECT_ROOMURL=room-goodrooms-tky-rent
+  #     - NATS_SUBJECT_ROOMDETAIL=roomdetails-tky-rent
+  #   depends_on:
+  #     - nats-server
+  # mediator:
+  #   image: "mediator:1.0.0"
+  #   environment:
+  #     - NATS_SERVER_URL=nats-server:4222
+  #   depends_on:
+  #     - nats-server
+  # notifier:
+  #   image: "notifier:1.0.0"
+  #   environment:
+  #     - NATS_SERVER_URL=nats-server:4222
+  #     - NATS_CONSUMER_NAME=myconsumer
+  #     - CACHE_MGR_URL=cachemgr:50051
+  #     - LINE_NOTIFY_TOKEN=<YOUR LINE NOTIFY TOKEN>
+  #     - ENABLE_NOTIFY=0
+  #   depends_on:
+  #     - nats-server
+  #     - cachemgr
+  # notifier-ngy:
+  #   image: "notifier:1.0.0"
+  #   environment:
+  #     - NATS_SERVER_URL=nats-server:4222
+  #     - NATS_CONSUMER_NAME=myconsumer2
+  #     - CACHE_MGR_URL=cachemgr:50051
+  #     - LINE_NOTIFY_TOKEN=<YOUR LINE NOTIFY TOKEN>
+  #     - ENABLE_NOTIFY=1
+  #   depends_on:
+  #     - nats-server
+  #     - cachemgr
+  #     - scanner-homes-ngy
+  #   volumes:
+  #     - ./notification/setting-ngy-rent:/usr/src/app/setting
+  # cachemgr:
+  #   image: "cachemgr:1.0.0"
+  #   ports:
+  #     - 50051:50051
+  #   environment:
+  #     - IGNORE_INSPECTED_CACHE=0
+  #     - ENABLE_CACHE=0
+  #     - REDIS_SERVER_URL=redis://192.168.2.132:31951
+  # nats-server:
+  #   image: "nats:2.7.4"
+  #   ports:
+  #     - 4222:4222
+  #     - 6222:6222
+  #     - 8222:8222
+  #   command: -js
