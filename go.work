@@ -1,3 +1,6 @@
 go 1.20
 
-use ./cmd/crawler-homes/
+use (
+	./cmd/crawler-homes/
+	./cmd/scanner-homes
+)

@@ -8,9 +8,15 @@ services:
       replicas: 1
     environment:
       - WS_SESSION_ID=2729269e3612dc81d9f57aa7e00a7df9
-      - WS_ENDPOINT=ws://172.31.22.239:1234
-    # depends_on:
-    #   - nats-server
+      - WS_ENDPOINT=ws://172.31.22.239:12345
+    depends_on:
+      - pw-server
+  pw-server:
+    image: "pw-server:1.0.0"
+    ports:
+      - 12345:12345
+    deploy:
+      replicas: 1
   # scanner-suumo:
   #   image: "scanner-suumo:1.0.0"
   #   deploy:
@@ -90,10 +96,10 @@ services:
   #     - IGNORE_INSPECTED_CACHE=0
   #     - ENABLE_CACHE=0
   #     - REDIS_SERVER_URL=redis://192.168.2.132:31951
-  # nats-server:
-  #   image: "nats:2.7.4"
-  #   ports:
-  #     - 4222:4222
-  #     - 6222:6222
-  #     - 8222:8222
-  #   command: -js
+  nats-server:
+    image: "nats:2.7.4"
+    ports:
+      - 4222:4222
+      - 6222:6222
+      - 8222:8222
+    command: -js

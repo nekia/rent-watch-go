@@ -9,25 +9,79 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/nats-io/nats.go"
 	"github.com/playwright-community/playwright-go"
 )
 
+const (
+	NATS_SUBJECT_CRAWL_REQ  = "crawl-request"
+	NATS_SUBJECT_CRAWL_RESP = "crawl-response"
+	NATS_QUEUE_PREFIX       = "room-"
+	SITE_NAME               = "homes"
+)
+
 var (
+	NATS_URL      = os.Getenv("NATS_SERVER_URL")
 	URL           = "https://www.homes.co.jp/mansion/chuko/tokyo/list/?cond%5Bcity%5D%5B13104%5D=13104&cond%5Bcity%5D%5B13113%5D=13113&cond%5Bcity%5D%5B13110%5D=13110&cond%5Bcity%5D%5B13114%5D=13114&cond%5Bmoneyroom%5D=0&cond%5Bmoneyroomh%5D=10000&cond%5Bhousearea%5D=60&cond%5Bhouseareah%5D=0&cond%5Bwalkminutesh%5D=0&cond%5Bhouseageh%5D=0&cond%5Bmcf%5D%5B340102%5D=340102&cond%5Bmcf%5D%5B113201%5D=113201&bukken_attr%5Bcategory%5D=mansion&bukken_attr%5Bbtype%5D=chuko&bukken_attr%5Bpref%5D=13"
 	USER_AGENT    = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4595.0 Safari/537.36"
 	WS_ENDPOINT   = os.Getenv("WS_ENDPOINT")
 	WS_SESSION_ID = os.Getenv("WS_SESSION_ID")
 )
 
+type crawlReq struct {
+	SiteName string `json:"siteName,omitempty"`
+}
+
+type crawlResp struct {
+	Url string `json:"url,omitempty"`
+}
+
 func main() {
+
+	if len(NATS_URL) == 0 || len(WS_ENDPOINT) == 0 || len(WS_SESSION_ID) == 0 {
+		log.Fatalf("need to specify ws endpoint info")
+	}
+
+	// Connect to the NATS server
+	nc, err := nats.Connect(NATS_URL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer nc.Close()
+
+	c, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer c.Close()
+
+	// Subscribe to a subject
+	chRecv := make(chan *crawlReq)
+	_, err = c.BindRecvChan(NATS_SUBJECT_CRAWL_REQ, chRecv)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	chSend := make(chan *crawlResp)
+	err = c.BindSendChan(NATS_SUBJECT_CRAWL_RESP, chSend)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for msg := range chRecv {
+		if msg.SiteName == SITE_NAME {
+			startCrawl(chSend)
+		}
+	}
+
+}
+
+func startCrawl(ch chan *crawlResp) error {
 	pw, err := playwright.Run()
 	if err != nil {
 		log.Fatalf("could not start playwright: %v", err)
 	}
-
-	if len(WS_ENDPOINT) == 0 || len(WS_SESSION_ID) == 0 {
-		log.Fatalf("need to specify ws endpoint info")
-	}
+	defer pw.Stop()
 
 	wsURL := path.Join(WS_ENDPOINT, WS_SESSION_ID)
 	browser, err := pw.Chromium.Connect(wsURL)
@@ -72,6 +126,8 @@ func main() {
 				log.Fatalf("could not get text content: %v", err)
 			}
 			fmt.Printf("%d: %s\n", i+1, detailLink)
+
+			ch <- &crawlResp{Url: detailLink}
 		}
 
 		if err = pagination(&browser, &page); err != nil {
@@ -84,6 +140,8 @@ func main() {
 	if err = pw.Stop(); err != nil {
 		log.Fatalf("could not stop Playwright: %v", err)
 	}
+
+	return nil
 }
 
 func pagination(browser *playwright.Browser, page *playwright.Page) error {
