@@ -68,6 +68,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	fmt.Printf("Start waiting for crawl request... [%s]\n", SITE_NAME)
+
 	for msg := range chRecv {
 		if msg.SiteName == SITE_NAME {
 			startCrawl(chSend)
