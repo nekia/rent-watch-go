@@ -104,8 +104,8 @@ scanner-%.amd64:
 	$(DOCKER_BUILDX) -f scanner/$(patsubst scanner-%.amd64,%,$@)/Dockerfile --platform linux/amd64 -t ${REGISTRY_URL}/$(patsubst %.arm64,%,$@):$(COMMIT_HASH) --push
 
 scanner-%:
-	cd scanner/$* && \
-	$(DOCKER_BUILDX) -f scanner/$(patsubst scanner-%,%,$@)/Dockerfile --platform linux/amd64 -t ${REGISTRY_URL}/$@:$(COMMIT_HASH) --push
+	cd cmd/$@ && \
+	docker build -t $@-go:1.0.0 .
 
 crawler-%.arm64: protogen.crawler-%
 	$(DOCKER_BUILDX) -f crawler/$(patsubst crawler-%.arm64,%,$@)/Dockerfile --platform linux/arm64,linux/amd64 -t ${REGISTRY_URL}/$(patsubst %.arm64,%,$@):$(COMMIT_HASH) --push
@@ -114,6 +114,10 @@ crawler-%.amd64: protogen.crawler-%
 	$(DOCKER_BUILDX) -f crawler/$(patsubst crawler-%.amd64,%,$@)/Dockerfile --platform linux/amd64 -t ${REGISTRY_URL}/$(patsubst %.amd64,%,$@):$(COMMIT_HASH) --push
 
 crawler-%:
+	cd cmd/$@ && \
+	docker build -t $@-go:1.0.0 .
+
+pw-server:
 	cd cmd/$@ && \
 	docker build -t $@-go:1.0.0 .
 

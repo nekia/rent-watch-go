@@ -7,12 +7,13 @@ services:
     deploy:
       replicas: 1
     environment:
-      - WS_SESSION_ID=2729269e3612dc81d9f57aa7e00a7df9
-      - WS_ENDPOINT=ws://172.31.22.239:12345
+      - WS_SESSION_ID=1c4b5dfd850141947303ddd530bf254d
+      - WS_ENDPOINT=ws://pw-server:12345
+      - NATS_SERVER_URL=nats-server:4222
     depends_on:
       - pw-server
   pw-server:
-    image: "pw-server:1.0.0"
+    image: "pw-server-go:1.0.0"
     ports:
       - 12345:12345
     deploy:
@@ -27,16 +28,17 @@ services:
   #     - NATS_SUBJECT_ROOMDETAIL=roomdetails-tky-rent
   #   depends_on:
   #     - nats-server
-  # scanner-homes:
-  #   image: "scanner-homes:1.0.0"
-  #   deploy:
-  #     replicas: 1
-  #   environment:
-  #     - NATS_SERVER_URL=nats-server:4222
-  #     - NATS_SUBJECT_ROOMURL=room-homes-tky-rent
-  #     - NATS_SUBJECT_ROOMDETAIL=roomdetails-tky-rent
-  #   depends_on:
-  #     - nats-server
+  scanner-homes:
+    image: "scanner-homes-go:1.0.0"
+    deploy:
+      replicas: 1
+    environment:
+      - WS_SESSION_ID=1c4b5dfd850141947303ddd530bf254d
+      - WS_ENDPOINT=ws://pw-server:12345
+      - NATS_SERVER_URL=nats-server:4222
+    depends_on:
+      - pw-server
+      - nats-server
   # scanner-homes-ngy:
   #   image: "scanner-homes:1.0.0"
   #   deploy:
