@@ -1,0 +1,50 @@
+// Protocol Buffersのバージョンを指定
+syntax = "proto3";
+
+option go_package = "github.com/nekia/rent-watch-go/protobuf/checker";
+
+// パッケージを指定
+package checker;
+
+import public "roomdetail.proto";
+
+// サービスを定義
+service Checker {
+  rpc CheckByUrl (CheckByUrlRequest) returns (CheckByUrlResponse);
+  rpc CheckByRoomDetail (CheckByRoomDetailRequest) returns (CheckByRoomDetailResponse);
+  rpc UpdateCheckStatus (UpdateCheckStatusRequest) returns (UpdateCheckStatusResponse);
+}
+
+message CheckByUrlRequest {
+  string url = 1;
+}
+
+message CheckByUrlResponse {
+  CheckStatus result = 1;
+}
+
+message CheckByRoomDetailRequest {
+  RoomDetail detail = 1;
+}
+
+message CheckByRoomDetailResponse {
+  CheckStatus result = 1;
+}
+
+message UpdateCheckStatusRequest {
+  RoomDetail detail = 1;
+  CheckStatus status = 2;
+}
+
+message UpdateCheckStatusResponse {
+  CheckStatus result = 1;
+}
+
+enum CheckStatus {
+  NOT_USED = 0;
+  SATISFIED = 1;
+  NOT_SATISFIED = 2;
+  NOT_INSPECTED = 3;
+  ALREADY_NOTIFIED = 4;
+  ALREADY_INSPECTED = 5;
+}

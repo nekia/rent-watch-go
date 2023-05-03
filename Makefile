@@ -82,6 +82,12 @@ protogen.area-info-mgr:
 		--proto_path=protobuf \
 		./protobuf/areaInfoMgr.proto
 
+protogen.checker:
+	cd protobuf/checker && \
+	protoc --go_out=. --go_opt=paths=source_relative \
+		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+		--proto_path=. ./checker.proto ./roomdetail.proto
+
 pwbase:
 	$(DOCKER_BUILDX) -f Dockerfile-pwbase --platform linux/amd64 -t ${REGISTRY_URL}/$@:$(COMMIT_HASH) --push
 
