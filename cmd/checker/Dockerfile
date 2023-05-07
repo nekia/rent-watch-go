@@ -13,5 +13,6 @@ FROM debian
 
 COPY --from=gobuild /usr/local/app/main /main
 COPY --from=gobuild /root/.cache/ms-playwright-go /root/.cache/ms-playwright-go
+COPY ./config.json /config.json
 # ENTRYPOINT ["/usr/local/app/main"]
 ENTRYPOINT ["/main"]

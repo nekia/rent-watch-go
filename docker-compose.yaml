@@ -33,7 +33,7 @@ services:
       replicas: 1
     environment:
       - NATS_SERVER_URL=nats-server:4222
-      - LINE_NOTIFY_TOKEN=K5LhLO8D4BuzC2f4UQx8BVmHbf9Y8ei3nKuWte5HCIM
+      - LINE_NOTIFY_TOKEN=${LINE_NOTIFY_TOKEN}
     depends_on:
       - nats-server
   checker:
