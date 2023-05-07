@@ -136,8 +136,13 @@ main.arm64:
 main.amd64:
 	$(DOCKER_BUILDX) -f main/Dockerfile --platform linux/amd64 -t ${REGISTRY_URL}/$(patsubst %.amd64,%,$@):$(COMMIT_HASH) --push
 
-notifier: protogen.notifier
-	$(DOCKER_BUILD) -f notifier/Dockerfile -t $@:$(COMMIT_HASH)
+notifier:
+	cd cmd/$@ && \
+	docker build -t $@-go:1.0.0 .
+
+checker:
+	cd cmd/$@ && \
+	docker build -t $@-go:1.0.0 .
 
 notifier.arm64: protogen.notifier
 	$(DOCKER_BUILDX) -f notifier/Dockerfile --platform linux/arm64,linux/amd64 -t ${REGISTRY_URL}/$(patsubst %.arm64,%,$@):$(COMMIT_HASH) --push

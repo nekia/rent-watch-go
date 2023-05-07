@@ -17,12 +17,13 @@ import (
 var (
 	ENDPOINT_URL = "https://notify-api.line.me/api/notify"
 	LINE_TOKEN   = os.Getenv("LINE_NOTIFY_TOKEN")
+	NATS_URL     = os.Getenv("NATS_SERVER_URL")
 )
 
 func main() {
 
 	// Connect to NATS
-	nc, _ := nats.Connect(nats.DefaultURL)
+	nc, _ := nats.Connect(NATS_URL)
 
 	// Create JetStream Context
 	js, _ := nc.JetStream(nats.PublishAsyncMaxPending(256))

@@ -19,7 +19,8 @@ import (
 )
 
 var (
-	port = flag.Int("port", 50051, "The server port")
+	port             = flag.Int("port", 50051, "The server port")
+	REDIS_SERVER_URL = os.Getenv("REDIS_SERVER_URL")
 )
 
 type server struct {
