@@ -3,6 +3,7 @@ go 1.20
 use (
 	./cmd/checker
 	./cmd/crawler-homes/
+	./cmd/notifier
 	./cmd/pwbaseline
 	./cmd/scanner-homes
 )

@@ -22,6 +22,8 @@ github.com/nekia/rent-watch-go v0.0.0-20230504024209-fdfbd419d542 h1:IibAB9pbq/f
 github.com/nekia/rent-watch-go v0.0.0-20230504024209-fdfbd419d542/go.mod h1:QyRp5L49ZJYQlUEdtvWXNHAbTh9WK6166yWrkmdfhVw=
 github.com/nekia/rent-watch-go v0.0.0-20230504030334-adff6db24c59 h1:7a3PR5emVKehjyryoduHGt+gyDywfYcCBip6odw4MVg=
 github.com/nekia/rent-watch-go v0.0.0-20230504030334-adff6db24c59/go.mod h1:QyRp5L49ZJYQlUEdtvWXNHAbTh9WK6166yWrkmdfhVw=
+github.com/nekia/rent-watch-go v0.0.0-20230504031923-ee9a5abc9df9 h1:UeK6H18Lky6fD5PvGkqFSAVknG575NdJpTWpffBK1XI=
+github.com/nekia/rent-watch-go v0.0.0-20230504031923-ee9a5abc9df9/go.mod h1:QyRp5L49ZJYQlUEdtvWXNHAbTh9WK6166yWrkmdfhVw=
 github.com/redis/go-redis/v9 v9.0.4 h1:FC82T+CHJ/Q/PdyLW++GeCO+Ol59Y4T7R4jbgjvktgc=
 github.com/redis/go-redis/v9 v9.0.4/go.mod h1:WqMKv5vnQbRuZstUwxQI195wHy+t4PuXDOjzMvcuQHk=
 golang.org/x/net v0.8.0 h1:Zrh2ngAOFYneWTAIAPethzeaQLuHwhuBkuV6ZiRnUaQ=
