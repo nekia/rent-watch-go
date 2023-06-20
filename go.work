@@ -6,4 +6,5 @@ use (
 	./cmd/notifier
 	./cmd/pwbaseline
 	./cmd/scanner-homes
+	./core/commondata
 )

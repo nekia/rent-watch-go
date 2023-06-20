@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go"
+	commondata "github.com/nekia/rent-watch-go/core/commondata"
 	"github.com/playwright-community/playwright-go"
 )
 
@@ -27,14 +28,6 @@ var (
 	WS_ENDPOINT   = os.Getenv("WS_ENDPOINT")
 	WS_SESSION_ID = os.Getenv("WS_SESSION_ID")
 )
-
-type CrawlReq struct {
-	SiteName string `json:"siteName,omitempty"`
-}
-
-type CrawlResp struct {
-	Url string `json:"url,omitempty"`
-}
 
 func main() {
 
@@ -56,13 +49,13 @@ func main() {
 	defer c.Close()
 
 	// Subscribe to a subject
-	chRecv := make(chan *CrawlReq)
+	chRecv := make(chan *commondata.CrawlReq)
 	_, err = c.BindRecvChan(NATS_SUBJECT_CRAWL_REQ, chRecv)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	chSend := make(chan *CrawlResp)
+	chSend := make(chan *commondata.CrawlResp)
 	err = c.BindSendChan(NATS_SUBJECT_CRAWL_RESP, chSend)
 	if err != nil {
 		log.Fatal(err)
@@ -78,7 +71,7 @@ func main() {
 
 }
 
-func startCrawl(ch chan *CrawlResp) error {
+func startCrawl(ch chan *commondata.CrawlResp) error {
 	pw, err := playwright.Run()
 	if err != nil {
 		log.Fatalf("could not start playwright: %v", err)
@@ -129,7 +122,7 @@ func startCrawl(ch chan *CrawlResp) error {
 			}
 			fmt.Printf("%d: %s\n", i+1, detailLink)
 
-			ch <- &CrawlResp{Url: detailLink}
+			ch <- &commondata.CrawlResp{Url: detailLink}
 		}
 
 		if err = pagination(&browser, &page); err != nil {

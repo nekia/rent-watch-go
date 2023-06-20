@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/nats-io/nats.go"
+	commondata "github.com/nekia/rent-watch-go/core/commondata"
 	"github.com/playwright-community/playwright-go"
 )
 
@@ -25,25 +26,6 @@ var (
 	WS_ENDPOINT   = os.Getenv("WS_ENDPOINT")
 	WS_SESSION_ID = os.Getenv("WS_SESSION_ID")
 )
-
-type floorLevel struct {
-	FloorLevel    int `json:"floorLevel,omitempty"`
-	FloorTopLevel int `json:"floorTopLevel,omitempty"`
-}
-type ScanResp struct {
-	Address    string     `json:"address,omitempty"`
-	Price      int        `json:"price,omitempty"`
-	Size       float64    `json:"size,omitempty"`
-	FloorLevel floorLevel `json:"floorLevel,omitempty"`
-	Location   string     `json:"location,omitempty"`
-	BuiltYear  int        `json:"builtYear,omitempty"`
-	IsPetOK    bool       `json:"isPetOK,omitempty"`
-}
-
-type ScanReq struct {
-	SiteName string `json:"siteName,omitempty"`
-	Url      string `json:"url,omitempty"`
-}
 
 func main() {
 
@@ -64,14 +46,14 @@ func main() {
 	}
 	defer c.Close()
 
-	chSend := make(chan *ScanResp)
+	chSend := make(chan *commondata.ScanResp)
 	err = c.BindSendChan(NATS_SUBJECT_SCAN_RESP, chSend)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Subscribe to a subject
-	chRecv := make(chan *ScanReq)
+	chRecv := make(chan *commondata.ScanReq)
 
 	_, err = c.BindRecvQueueChan(NATS_SUBJECT_SCAN_REQ, NATS_QUEUE_PREFIX, chRecv)
 	if err != nil {
@@ -118,7 +100,7 @@ func scanRoomDetail(url string) error {
 		log.Fatalf("could not goto: %v", err)
 	}
 
-	var resp ScanResp
+	var resp commondata.ScanResp
 	resp.Address, err = getAddress(&page)
 	if err != nil {
 		panic(err)
@@ -195,8 +177,8 @@ func getSize(page *playwright.Page) (float64, error) {
 	return strconv.ParseFloat(split_fullSizeStr[0], 64)
 }
 
-func getFloorLevel(page *playwright.Page) floorLevel {
-	var fLevel floorLevel
+func getFloorLevel(page *playwright.Page) commondata.FloorLevel {
+	var fLevel commondata.FloorLevel
 
 	pentry, err := (*page).QuerySelector("//th[text()='所在階 / 階数']/following-sibling::td[1]/span")
 	if err != nil {

@@ -6,8 +6,7 @@ import (
 	"os"
 
 	"github.com/nats-io/nats.go"
-	crawler "github.com/nekia/rent-watch-go/cmd/crawler-homes"
-	scanner "github.com/nekia/rent-watch-go/cmd/scanner-homes"
+	commondata "github.com/nekia/rent-watch-go/core/commondata"
 )
 
 var (
@@ -25,7 +24,7 @@ const (
 	SITE_NAME                 = "homes"
 )
 
-func startReceiveScanResults(ch chan *scanner.ScanResp) {
+func startReceiveScanResults(ch chan *commondata.ScanResp) {
 	for msg := range ch {
 		// Send a scan request against each room detail site (NATS)
 		fmt.Printf("Receiv Scan Resp to [%s]\n", msg.Location)
@@ -52,42 +51,42 @@ func main() {
 	defer c.Close()
 
 	// Subscribe to a subject
-	chCrawlerSend := make(chan *crawler.CrawlReq)
+	chCrawlerSend := make(chan *commondata.CrawlReq)
 	err = c.BindSendChan(NATS_SUBJECT_CRAWL_REQ, chCrawlerSend)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Subscribe to a subject
-	chCrawlerRecv := make(chan *crawler.CrawlResp)
+	chCrawlerRecv := make(chan *commondata.CrawlResp)
 	_, err = c.BindRecvChan(NATS_SUBJECT_CRAWL_RESP, chCrawlerRecv)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Subscribe to a subject
-	chScannerSend := make(chan *scanner.ScanReq)
+	chScannerSend := make(chan *commondata.ScanReq)
 	err = c.BindSendChan(NATS_SUBJECT_SCANNER_REQ, chScannerSend)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Subscribe to a subject
-	chScannerRecv := make(chan *scanner.ScanResp)
+	chScannerRecv := make(chan *commondata.ScanResp)
 	_, err = c.BindRecvChan(NATS_SUBJECT_SCANNER_RESP, chScannerRecv)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Send a request to crawler (NATS)
-	chCrawlerSend <- &crawler.CrawlReq{SiteName: "homes"}
+	chCrawlerSend <- &commondata.CrawlReq{SiteName: "homes"}
 
 	go startReceiveScanResults(chScannerRecv)
 
 	// Receive a response from crawler
 	for msg := range chCrawlerRecv {
 		// Send a scan request against each room detail site (NATS)
-		chScannerSend <- &scanner.ScanReq{SiteName: "homes", Url: msg.Url}
+		chScannerSend <- &commondata.ScanReq{SiteName: "homes", Url: msg.Url}
 		fmt.Printf("Send Scan Req to [%s]\n", msg.Url)
 	}
 	// Send multiple requests to the scanner simultanously
