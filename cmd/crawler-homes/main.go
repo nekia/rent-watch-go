@@ -15,10 +15,8 @@ import (
 )
 
 const (
-	NATS_SUBJECT_CRAWL_REQ  = "crawl-request"
-	NATS_SUBJECT_CRAWL_RESP = "crawl-response"
-	NATS_QUEUE_PREFIX       = "room-"
-	SITE_NAME               = "homes"
+	NATS_QUEUE_PREFIX = "room-"
+	SITE_NAME         = "homes"
 )
 
 var (
@@ -50,13 +48,13 @@ func main() {
 
 	// Subscribe to a subject
 	chRecv := make(chan *commondata.CrawlReq)
-	_, err = c.BindRecvChan(NATS_SUBJECT_CRAWL_REQ, chRecv)
+	_, err = c.BindRecvChan(commondata.NATS_SUBJECT_CRAWL_REQ, chRecv)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	chSend := make(chan *commondata.CrawlResp)
-	err = c.BindSendChan(NATS_SUBJECT_CRAWL_RESP, chSend)
+	err = c.BindSendChan(commondata.NATS_SUBJECT_CRAWL_RESP, chSend)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,5 +1,12 @@
 package commondata
 
+const (
+	NATS_SUBJECT_CRAWL_REQ  = "crawl-request"
+	NATS_SUBJECT_CRAWL_RESP = "crawl-response"
+	NATS_SUBJECT_SCAN_REQ   = "scan-request"
+	NATS_SUBJECT_SCAN_RESP  = "scan-response"
+)
+
 type CrawlReq struct {
 	SiteName string `json:"siteName,omitempty"`
 }

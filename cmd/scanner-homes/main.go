@@ -14,10 +14,8 @@ import (
 )
 
 const (
-	NATS_SUBJECT_SCAN_REQ  = "scan-request"
-	NATS_SUBJECT_SCAN_RESP = "scan-response"
-	NATS_QUEUE_PREFIX      = "room-"
-	SITE_NAME              = "homes"
+	NATS_QUEUE_PREFIX = "room-"
+	SITE_NAME         = "homes"
 )
 
 var (
@@ -47,7 +45,7 @@ func main() {
 	defer c.Close()
 
 	chSend := make(chan *commondata.ScanResp)
-	err = c.BindSendChan(NATS_SUBJECT_SCAN_RESP, chSend)
+	err = c.BindSendChan(commondata.NATS_SUBJECT_SCAN_RESP, chSend)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,7 +53,7 @@ func main() {
 	// Subscribe to a subject
 	chRecv := make(chan *commondata.ScanReq)
 
-	_, err = c.BindRecvQueueChan(NATS_SUBJECT_SCAN_REQ, NATS_QUEUE_PREFIX, chRecv)
+	_, err = c.BindRecvQueueChan(commondata.NATS_SUBJECT_SCAN_REQ, NATS_QUEUE_PREFIX, chRecv)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,6 +62,7 @@ func main() {
 
 	// Wait for messages in a loop
 	for msg := range chRecv {
+		fmt.Printf("Received a msg from ch [%v]", msg)
 		if msg.SiteName == SITE_NAME {
 			fmt.Printf("Received message: %s\n", msg.Url)
 			go scanRoomDetail(msg.Url)

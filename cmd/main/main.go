@@ -16,15 +16,12 @@ var (
 )
 
 const (
-	NATS_SUBJECT_CRAWL_REQ    = "crawl-request"
-	NATS_SUBJECT_CRAWL_RESP   = "crawl-response"
-	NATS_SUBJECT_SCANNER_REQ  = "scanner-request"
-	NATS_SUBJECT_SCANNER_RESP = "scanner-response"
-	NATS_QUEUE_PREFIX         = "room-"
-	SITE_NAME                 = "homes"
+	NATS_QUEUE_PREFIX = "room-"
+	SITE_NAME         = "homes"
 )
 
 func startReceiveScanResults(ch chan *commondata.ScanResp) {
+	fmt.Print("Start go routine for receiving scan result")
 	for msg := range ch {
 		// Send a scan request against each room detail site (NATS)
 		fmt.Printf("Receiv Scan Resp to [%s]\n", msg.Location)
@@ -52,28 +49,28 @@ func main() {
 
 	// Subscribe to a subject
 	chCrawlerSend := make(chan *commondata.CrawlReq)
-	err = c.BindSendChan(NATS_SUBJECT_CRAWL_REQ, chCrawlerSend)
+	err = c.BindSendChan(commondata.NATS_SUBJECT_CRAWL_REQ, chCrawlerSend)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Subscribe to a subject
 	chCrawlerRecv := make(chan *commondata.CrawlResp)
-	_, err = c.BindRecvChan(NATS_SUBJECT_CRAWL_RESP, chCrawlerRecv)
+	_, err = c.BindRecvChan(commondata.NATS_SUBJECT_CRAWL_RESP, chCrawlerRecv)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Subscribe to a subject
 	chScannerSend := make(chan *commondata.ScanReq)
-	err = c.BindSendChan(NATS_SUBJECT_SCANNER_REQ, chScannerSend)
+	err = c.BindSendChan(commondata.NATS_SUBJECT_SCAN_REQ, chScannerSend)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Subscribe to a subject
 	chScannerRecv := make(chan *commondata.ScanResp)
-	_, err = c.BindRecvChan(NATS_SUBJECT_SCANNER_RESP, chScannerRecv)
+	_, err = c.BindRecvChan(commondata.NATS_SUBJECT_SCAN_RESP, chScannerRecv)
 	if err != nil {
 		log.Fatal(err)
 	}

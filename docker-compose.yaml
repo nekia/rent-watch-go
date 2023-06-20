@@ -1,11 +1,20 @@
 version: "3"
 services:
+  main:
+    image: "main-go:1.0.0"
+    deploy:
+      replicas: 1
+    environment:
+      - NATS_SERVER_URL=nats-server:4222
+    depends_on:
+      - crawler-homes
+      - scanner-homes
   crawler-homes:
     image: "crawler-homes-go:1.0.0"
     deploy:
       replicas: 1
     environment:
-      - WS_SESSION_ID=1c4b5dfd850141947303ddd530bf254d
+      - WS_SESSION_ID=ddcd541770b514721eec020d4d5974c7
       - WS_ENDPOINT=ws://pw-server:12345
       - NATS_SERVER_URL=nats-server:4222
     depends_on:
@@ -21,7 +30,7 @@ services:
     deploy:
       replicas: 1
     environment:
-      - WS_SESSION_ID=1c4b5dfd850141947303ddd530bf254d
+      - WS_SESSION_ID=ddcd541770b514721eec020d4d5974c7
       - WS_ENDPOINT=ws://pw-server:12345
       - NATS_SERVER_URL=nats-server:4222
     depends_on:
