@@ -30,7 +30,7 @@ type floorLevel struct {
 	FloorLevel    int `json:"floorLevel,omitempty"`
 	FloorTopLevel int `json:"floorTopLevel,omitempty"`
 }
-type scanResp struct {
+type ScanResp struct {
 	Address    string     `json:"address,omitempty"`
 	Price      int        `json:"price,omitempty"`
 	Size       float64    `json:"size,omitempty"`
@@ -40,7 +40,7 @@ type scanResp struct {
 	IsPetOK    bool       `json:"isPetOK,omitempty"`
 }
 
-type scanReq struct {
+type ScanReq struct {
 	SiteName string `json:"siteName,omitempty"`
 	Url      string `json:"url,omitempty"`
 }
@@ -64,14 +64,14 @@ func main() {
 	}
 	defer c.Close()
 
-	chSend := make(chan *scanResp)
+	chSend := make(chan *ScanResp)
 	err = c.BindSendChan(NATS_SUBJECT_SCAN_RESP, chSend)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Subscribe to a subject
-	chRecv := make(chan *scanReq)
+	chRecv := make(chan *ScanReq)
 
 	_, err = c.BindRecvQueueChan(NATS_SUBJECT_SCAN_REQ, NATS_QUEUE_PREFIX, chRecv)
 	if err != nil {
@@ -118,7 +118,7 @@ func scanRoomDetail(url string) error {
 		log.Fatalf("could not goto: %v", err)
 	}
 
-	var resp scanResp
+	var resp ScanResp
 	resp.Address, err = getAddress(&page)
 	if err != nil {
 		panic(err)
@@ -143,7 +143,7 @@ func scanRoomDetail(url string) error {
 
 	resp.IsPetOK = getIsPetOK(&page)
 
-	fmt.Printf("scanResp: %v\n", resp)
+	fmt.Printf("ScanResp: %v\n", resp)
 	return nil
 }
 

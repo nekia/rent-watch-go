@@ -28,11 +28,11 @@ var (
 	WS_SESSION_ID = os.Getenv("WS_SESSION_ID")
 )
 
-type crawlReq struct {
+type CrawlReq struct {
 	SiteName string `json:"siteName,omitempty"`
 }
 
-type crawlResp struct {
+type CrawlResp struct {
 	Url string `json:"url,omitempty"`
 }
 
@@ -56,13 +56,13 @@ func main() {
 	defer c.Close()
 
 	// Subscribe to a subject
-	chRecv := make(chan *crawlReq)
+	chRecv := make(chan *CrawlReq)
 	_, err = c.BindRecvChan(NATS_SUBJECT_CRAWL_REQ, chRecv)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	chSend := make(chan *crawlResp)
+	chSend := make(chan *CrawlResp)
 	err = c.BindSendChan(NATS_SUBJECT_CRAWL_RESP, chSend)
 	if err != nil {
 		log.Fatal(err)
@@ -78,7 +78,7 @@ func main() {
 
 }
 
-func startCrawl(ch chan *crawlResp) error {
+func startCrawl(ch chan *CrawlResp) error {
 	pw, err := playwright.Run()
 	if err != nil {
 		log.Fatalf("could not start playwright: %v", err)
@@ -129,7 +129,7 @@ func startCrawl(ch chan *crawlResp) error {
 			}
 			fmt.Printf("%d: %s\n", i+1, detailLink)
 
-			ch <- &crawlResp{Url: detailLink}
+			ch <- &CrawlResp{Url: detailLink}
 		}
 
 		if err = pagination(&browser, &page); err != nil {

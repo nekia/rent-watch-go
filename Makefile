@@ -128,7 +128,8 @@ pw-server:
 	docker build -t $@-go:1.0.0 .
 
 main:
-	$(DOCKER_BUILD) -f main/Dockerfile -t $@:$(COMMIT_HASH)
+	cd cmd/$@ && \
+	docker build -t $@-go:1.0.0 .
 
 main.arm64:
 	$(DOCKER_BUILDX) -f main/Dockerfile --platform linux/arm64,linux/amd64 -t ${REGISTRY_URL}/$(patsubst %.arm64,%,$@):$(COMMIT_HASH) --push
