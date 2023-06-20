@@ -14,27 +14,37 @@ services:
     deploy:
       replicas: 1
     environment:
-      - WS_SESSION_ID=ddcd541770b514721eec020d4d5974c7
-      - WS_ENDPOINT=ws://pw-server:12345
+      - WS_SESSION_ID=63dcf995a09dfec7b35be9c9809791dc
+      - WS_ENDPOINT=ws://pw-server-1:12345
       - NATS_SERVER_URL=nats-server:4222
     depends_on:
-      - pw-server
-  pw-server:
+      - pw-server-1
+  pw-server-1:
     image: "pw-server-go:1.0.0"
-    ports:
-      - 12345:12345
     deploy:
       replicas: 1
+    ports:
+      - 12345:12345
+    volumes:
+      - ./cmd/pw-server/playwright-config-1.json:/usr/local/app/playwright-config.json
+  pw-server-2:
+    image: "pw-server-go:1.0.0"
+    deploy:
+      replicas: 1
+    ports:
+      - 23456:23456
+    volumes:
+      - ./cmd/pw-server/playwright-config-2.json:/usr/local/app/playwright-config.json
   scanner-homes:
     image: "scanner-homes-go:1.0.0"
     deploy:
       replicas: 1
     environment:
-      - WS_SESSION_ID=ddcd541770b514721eec020d4d5974c7
-      - WS_ENDPOINT=ws://pw-server:12345
+      - WS_SESSION_ID=fbc499da14a1b65f807194fa22216872
+      - WS_ENDPOINT=ws://pw-server-2:23456
       - NATS_SERVER_URL=nats-server:4222
     depends_on:
-      - pw-server
+      - pw-server-2
       - nats-server
   notifier:
     image: "notifier-go:1.0.0"

@@ -65,7 +65,7 @@ func main() {
 		fmt.Printf("Received a msg from ch [%v]", msg)
 		if msg.SiteName == SITE_NAME {
 			fmt.Printf("Received message: %s\n", msg.Url)
-			go scanRoomDetail(msg.Url)
+			scanRoomDetail(msg.Url)
 		}
 	}
 }
