@@ -24,7 +24,7 @@ func startReceiveScanResults(ch chan *commondata.ScanResp) {
 	fmt.Print("Start go routine for receiving scan result")
 	for msg := range ch {
 		// Send a scan request against each room detail site (NATS)
-		fmt.Printf("Receiv Scan Resp to [%s]\n", msg.Location)
+		fmt.Printf("Receiv Scan Resp to [%v]\n", msg)
 	}
 }
 

@@ -62,15 +62,16 @@ func main() {
 
 	// Wait for messages in a loop
 	for msg := range chRecv {
-		fmt.Printf("Received a msg from ch [%v]", msg)
+		fmt.Printf("Received a msg from ch [%v]\n", msg)
 		if msg.SiteName == SITE_NAME {
-			fmt.Printf("Received message: %s\n", msg.Url)
-			scanRoomDetail(msg.Url)
+			resp, _ := scanRoomDetail(msg.Url)
+			chSend <- resp
+			fmt.Printf("Sent message: %v\n", resp)
 		}
 	}
 }
 
-func scanRoomDetail(url string) error {
+func scanRoomDetail(url string) (*commondata.ScanResp, error) {
 	pw, err := playwright.Run()
 	if err != nil {
 		log.Fatalf("could not start playwright: %v", err)
@@ -91,10 +92,12 @@ func scanRoomDetail(url string) error {
 	if err != nil {
 		panic(err)
 	}
+
 	page, err := ctx.NewPage()
 	if err != nil {
 		log.Fatalf("could not create page: %v", err)
 	}
+
 	if _, err = page.Goto(url); err != nil {
 		log.Fatalf("could not goto: %v", err)
 	}
@@ -125,7 +128,7 @@ func scanRoomDetail(url string) error {
 	resp.IsPetOK = getIsPetOK(&page)
 
 	fmt.Printf("ScanResp: %v\n", resp)
-	return nil
+	return &resp, nil
 }
 
 func getAddress(page *playwright.Page) (string, error) {

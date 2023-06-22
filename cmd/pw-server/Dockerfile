@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN mkdir -p /usr/local/app
 COPY ./package.json /usr/local/app
-COPY ./playwright-config.json /usr/local/app
+COPY ./start.sh /usr/local/app
 WORKDIR /usr/local/app
 
 RUN npm i
@@ -26,4 +26,5 @@ RUN npx playwright install-deps chromium
 
 # COPY --from=gobuild /usr/local/app/main /main
 
-ENTRYPOINT [ "npx", "playwright", "launch-server", "--browser", "chromium", "--config", "./playwright-config.json" ]
+ENTRYPOINT [ "./start.sh" ]
+CMD [  ]
